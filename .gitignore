@@ -11,3 +11,5 @@ authorized_chats.txt
 log.txt
 accounts/*
 drive_folder
+env
+venv

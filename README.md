@@ -5,24 +5,20 @@
 
 <p align="center">
   
-## This Is A Telegram Bot Written In Python For Searching Files In Our Beloved Google Drive.It Can Search In Multiple Shared Drive/Team Drives.
+## A simple non-shitty, non garbagio english fork for searching stuff on google drive and barfing out telegraph ordered links for ease of use. 
 </p>
 
 
-Here Are Some Things To Get You Started.👇
+Here Are Some Things To Get You Started.
 
-### 👉[How To Deploy](https://github.com/iamLiquidX/SearchX/wiki/How-To-Deploy)
-
-
-For The Most Recent Changes, Please Check The Changelog.👇
-
-### 👉[Changelog](https://github.com/iamLiquidX/SearchX/wiki/Changelog)
-
-If Bot Still Getting Stuck On Any Task, Check Solution.👇
-
-### 👉[Fix](https://github.com/iamLiquidX/SearchX/wiki/Fix-To-Getting-Stuck)
+### [How To Deploy](https://github.com/AnimeKaizoku/ArchivistsBot/wiki/How-To-Deploy)
 
 
+For The Most Recent Changes, Please Check The Changelog.
 
-# Credits 👇
-1.[Sreeraj V R](https://github.com/SVR666)- Created Search Bot.
+### [Changelog](https://github.com/AnimeKaizoku/ArchivistsBot/wiki/Changelog)
+
+If Bot Still Getting Stuck On Any Task, Check Solution.
+
+### [Fix](https://github.com/AnimeKaizoku/ArchivistsBot/wiki/Fix-To-Getting-Stuck)
+

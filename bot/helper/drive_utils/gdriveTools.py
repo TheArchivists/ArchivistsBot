@@ -108,14 +108,14 @@ class GoogleDriveHelper:
         prev_page = 0
         for content in self.telegraph_content :
             if nxt_page == 1 :
-                content += f'<b><a href="https://telegra.ph/{self.path[nxt_page]}">Nᴇxᴛ</a></b>'
+                content += f'<b><a href="https://telegra.ph/{self.path[nxt_page]}">Next</a></b>'
                 nxt_page += 1
             else :
                 if prev_page <= self.num_of_path:
-                    content += f'<b><a href="https://telegra.ph/{self.path[prev_page]}">Pʀᴇᴠɪᴏᴜs</a></b>'
+                    content += f'<b><a href="https://telegra.ph/{self.path[prev_page]}">Previous</a></b>'
                     prev_page += 1
                 if nxt_page < self.num_of_path:
-                    content += f'<b> | <a href="https://telegra.ph/{self.path[nxt_page]}">Nᴇxᴛ</a></b>'
+                    content += f'<b> | <a href="https://telegra.ph/{self.path[nxt_page]}">Next</a></b>'
                     nxt_page += 1
             telegra_ph.edit_page(path = self.path[prev_page],
                                  title = 'SearchX',
@@ -147,60 +147,60 @@ class GoogleDriveHelper:
                     
                     if x:
                         if add_title_msg == True:
-                            msg = f'<h3>Sᴇᴀʀᴄʜ Rᴇsᴜʟᴛs Fᴏʀ Yᴏᴜʀ Kᴇʏᴡᴏʀᴅ : {fileName}</h3><br><b><a href="https://github.com/iamLiquidX/SearchX"> Bot Repo </a></b> ||<b><a href="https://t.me/imLiquidX"> Owner </a></b><br><br>'
+                            msg = f'<h3>I found: {fileName}</h3><br><b><a href="https://github.com/AnimeKaizoku/ArchivistsBot"> Bot Repo </a></b> ||<b><a href="https://t.me/imLiquidX"> Owner </a></b><br><br>'
                             add_title_msg = False
                         if add_drive_title == True:
                             msg += f"╾────────────╼<br><b>{DRIVE_NAME[INDEX]}</b><br>╾────────────╼<br>"
                             add_drive_title = False
                         if file.get('mimeType') == "application/vnd.google-apps.folder":  # Detect Whether Current Entity is a Folder or File.
                             msg += f"🗃️<code>{file.get('name')}</code> <b>(folder)</b><br>" \
-                                   f"<b><a href='https://drive.google.com/drive/folders/{file.get('id')}'>G-Dʀɪᴠᴇ Lɪɴᴋ</a></b>"
+                                   f"<b><a href='https://drive.google.com/drive/folders/{file.get('id')}'>Google Drive link</a></b>"
                             if INDEX_URL[INDEX] is not None:
                                 url_path = "/".join([requests.utils.quote(n, safe='') for n in self.get_recursive_list(file, parent_id)])
                                 url = f'{INDEX_URL[INDEX]}/{url_path}/'
-                                msg += f'<b> | <a href="{url}">Iɴᴅᴇx Lɪɴᴋ</a></b>'
+                                msg += f'<b> | <a href="{url}">Index link</a></b>'
                         else:
                             msg += f"<code>{file.get('name')}</code> <b>({self.get_readable_file_size(file.get('size'))})</b><br>" \
-                                   f"<b><a href='https://drive.google.com/uc?id={file.get('id')}&export=download'>G-Dʀɪᴠᴇ Lɪɴᴋ</a></b>"
+                                   f"<b><a href='https://drive.google.com/uc?id={file.get('id')}&export=download'>Google Drive link</a></b>"
                             if INDEX_URL[INDEX] is not None:
                                 url_path = "/".join([requests.utils.quote(n, safe ='') for n in self.get_recursive_list(file, parent_id)])
                                 url = f'{INDEX_URL[INDEX]}/{url_path}'
-                                msg += f'<b> | <a href="{url}">Iɴᴅᴇx Lɪɴᴋ</a></b>'
+                                msg += f'<b> | <a href="{url}">Index link</a></b>'
                         msg += '<br><br>'
                         content_count += 1
                     if (content_count==TELEGRAPHLIMIT):
-                        msg = f'<h3>Too many Sᴇᴀʀᴄʜ Rᴇsᴜʟᴛs Fᴏʀ Yᴏᴜʀ Kᴇʏᴡᴏʀᴅ : {fileName}</h3><br>'
+                        msg = f'<h3>Too many results for the keyword: {fileName}</h3><br>'
                       
                     
                         LOGGER.info(f"my a: {content_count}")
                         #self.telegraph_content.append(msg)
                         #msg = ""
                         #content_count = 0
-                        return f'<b>➼Too Many Results To Show. I have Found more than {content_count} .Please Modify Your Search Query, Like Add Year With Movie Name, Add Season/Episode Number To TV-Show Name.:(</b>', None
+                        return f"It...it's too much. Found more than {content_count}.\nTry refine search query to reduce number of results.", None
 
         
         if msg != '':
             self.telegraph_content.append(msg)
             
         if len(self.telegraph_content) == 0:
-            return "<b>➼Nᴏ Rᴇsᴜʟᴛs Fᴏᴜɴᴅ Fᴏʀ Yᴏᴜʀ Fɪʟᴇ Nᴀᴍᴇ Kᴇʏᴡᴏʀᴅ :(</b>", None
+            return "I ..I found nothing of that sort :(", None
       
             
         
 
         for content in self.telegraph_content :
-            self.path.append(telegra_ph.create_page(title = 'SearchX',
+            self.path.append(telegra_ph.create_page(title = '♙ The Archivists • 04 • Dragonia',
                                                 html_content=content )['path'])
 
         self.num_of_path = len(self.path)      
         if self.num_of_path > 1:
             self.edit_telegraph()
 
-        msg = f" <b>Sᴇᴀʀᴄʜ Rᴇsᴜʟᴛs Fᴏʀ Yᴏᴜʀ Kᴇʏᴡᴏʀᴅ :</b> ➼ {fileName} 👇 "
+        msg = f" <b>Here is what I found for {fileName}</b>"
         
-        msg = f" <b>I Have Found  : {content_count} Results For Your Search Query</b> "
+        msg = f" <b>I Have Found  : {content_count} Results for your search Query</b> "
         
         buttons = button_builder.ButtonMaker()   
-        buttons.buildbutton("Click Here For Results", f"https://telegra.ph/{self.path[0]}")
+        buttons.buildbutton("Click Here for results", f"https://telegra.ph/{self.path[0]}")
 
         return msg, InlineKeyboardMarkup(buttons.build_menu(1))
