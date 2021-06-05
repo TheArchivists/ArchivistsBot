@@ -147,7 +147,7 @@ class GoogleDriveHelper:
                     
                     if x:
                         if add_title_msg == True:
-                            msg = f'<h3>I found: {fileName}</h3><br><b><a href="https://github.com/AnimeKaizoku/ArchivistsBot"> Bot Repo </a></b> ||<b><a href="https://t.me/imLiquidX"> Owner </a></b><br><br>'
+                            msg = f'<h3>I found: {fileName}</h3><br><b><a href="https://github.com/AnimeKaizoku/ArchivistsBot"> Bot Repo </a></b> || @TheArchivists'
                             add_title_msg = False
                         if add_drive_title == True:
                             msg += f"╾────────────╼<br><b>{DRIVE_NAME[INDEX]}</b><br>╾────────────╼<br>"
