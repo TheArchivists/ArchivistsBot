@@ -88,7 +88,7 @@ class GoogleDriveHelper:
             if search_type == '-d':
                 query += "mimeType = 'application/vnd.google-apps.folder' and "
             elif search_type == '-f':
-                query += "mimeType = 'application/vnd.google-apps.folder' and "
+                query += "mimeType != 'application/vnd.google-apps.folder' and "
         var=re.split('[ ._]',fileName)
         for text in var:
             query += f"name contains '{text}' and "
