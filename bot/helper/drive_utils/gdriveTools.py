@@ -125,8 +125,8 @@ class GoogleDriveHelper:
     def drive_list(self, fileName):
         if len(fileName) > 2:
             remove_list = ['A', 'a', 'X', 'x']
-            if fileName[1] is ' ' and fileName[0] in remove_list:
-                fileName = fileName[ 2 : (len(fileName) - 2) ]
+            if fileName[1] == ' ' and fileName[0] in remove_list:
+                fileName = fileName[ 2 : len(fileName) ]
         msg = ''
         INDEX = -1
         content_count = 0
