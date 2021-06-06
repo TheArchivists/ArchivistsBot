@@ -123,9 +123,14 @@ class GoogleDriveHelper:
         return
 
     def drive_list(self, fileName):
+        if len(fileName) > 2:
+            remove_list = ['A', 'a', 'X', 'x']
+            if fileName[1] is ' ' and fileName[0] in remove_list:
+                fileName = fileName[ 2 : (len(fileName) - 2) ]
         msg = ''
         INDEX = -1
         content_count = 0
+        reached_max_limit = False
         add_title_msg = True
         var=re.split(' |\.|_|,',fileName)
         pattern=""       
@@ -169,14 +174,14 @@ class GoogleDriveHelper:
                         msg += '<br><br>'
                         content_count += 1
                     if (content_count==TELEGRAPHLIMIT):
-                        msg = f'<h3>Too many results for the keyword: {fileName}</h3><br>'
+                        reached_max_limit = True
                       
                     
                         LOGGER.info(f"my a: {content_count}")
                         #self.telegraph_content.append(msg)
                         #msg = ""
                         #content_count = 0
-                        return f"It...it's too much. Found more than {content_count}.\nTry refine search query to reduce number of results.", None
+                        break
 
         
         if msg != '':
@@ -199,6 +204,9 @@ class GoogleDriveHelper:
         msg = f"Here is what I found for {fileName}"
         
         msg = f"Found {content_count} results"
+        
+        if reached_max_limit:
+            msg += ". (Only showing top 95 results. Omitting reamining results)"
         
         buttons = button_builder.ButtonMaker()   
         buttons.buildbutton("Click Here for results", f"https://telegra.ph/{self.path[0]}")
