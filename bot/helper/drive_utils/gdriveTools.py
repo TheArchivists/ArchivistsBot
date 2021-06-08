@@ -82,9 +82,17 @@ class GoogleDriveHelper:
         rtnlist.reverse()
         return rtnlist
 
-    def drive_query(self, parent_id, fileName):
-        var=re.split(' |\.|_',fileName)
-        query = f"name contains '{var[0]}' and trashed=false"
+    def drive_query(self, parent_id, search_type, fileName):
+        query = ""
+        if search_type is not None:
+            if search_type == '-d':
+                query += "mimeType = 'application/vnd.google-apps.folder' and "
+            elif search_type == '-f':
+                query += "mimeType != 'application/vnd.google-apps.folder' and "
+        var=re.split('[ ._]',fileName)
+        for text in var:
+            query += f"name contains '{text}' and "
+        query += "trashed=false"
         if parent_id != "root":
             response = self.__service.files().list(supportsTeamDrives=True,
                                                includeTeamDriveItems=True,
@@ -123,6 +131,13 @@ class GoogleDriveHelper:
         return
 
     def drive_list(self, fileName):
+        search_type = None
+        if re.search("^-d ", fileName, re.IGNORECASE):
+            search_type = '-d'
+            fileName = fileName[ 2 : len(fileName)]
+        elif re.search("^-f ", fileName, re.IGNORECASE):
+            search_type = '-f'
+            fileName = fileName[ 2 : len(fileName)]
         if len(fileName) > 2:
             remove_list = ['A', 'a', 'X', 'x']
             if fileName[1] == ' ' and fileName[0] in remove_list:
@@ -132,13 +147,14 @@ class GoogleDriveHelper:
         content_count = 0
         reached_max_limit = False
         add_title_msg = True
-        var=re.split(' |\.|_|,',fileName)
-        pattern=""       
+        var=re.split('[ ._,]',fileName)
+        pattern = ""
         for i in var:
-            pattern+= ".*"+i
+            pattern += f"(?=.*{i})"
+        pattern += ".*$"
         for parent_id in DRIVE_ID :
             add_drive_title = True
-            response = self.drive_query(parent_id, fileName) 
+            response = self.drive_query(parent_id, search_type, fileName)
             #LOGGER.info(f"my a: {response}")
             
             
@@ -200,13 +216,11 @@ class GoogleDriveHelper:
         self.num_of_path = len(self.path)      
         if self.num_of_path > 1:
             self.edit_telegraph()
-
-        msg = f"Here is what I found for {fileName}"
         
-        msg = f"Found {content_count} results"
+        msg = f"Found {content_count}" + ("+" if content_count >= 95 else "") + " results"
         
         if reached_max_limit:
-            msg += ". (Only showing top 95 results. Omitting reamining results)"
+            msg += ". (Only showing top 95 results. Omitting remaining results)"
         
         buttons = button_builder.ButtonMaker()   
         buttons.buildbutton("Click Here for results", f"https://telegra.ph/{self.path[0]}")
