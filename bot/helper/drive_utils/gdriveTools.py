@@ -89,7 +89,7 @@ class GoogleDriveHelper:
                 query += "mimeType = 'application/vnd.google-apps.folder' and "
             elif search_type == '-f':
                 query += "mimeType != 'application/vnd.google-apps.folder' and "
-        var=re.split('[ ._]',fileName)
+        var=re.split('[ ._,\\[\\]-]',fileName)
         for text in var:
             query += f"name contains '{text}' and "
         query += "trashed=false"
@@ -147,7 +147,7 @@ class GoogleDriveHelper:
         content_count = 0
         reached_max_limit = False
         add_title_msg = True
-        var=re.split('[ ._,]',fileName)
+        var=re.split('[ ._,\\[\\]-]',fileName)
         pattern = ""
         for i in var:
             pattern += f"(?=.*{i})"
@@ -189,7 +189,7 @@ class GoogleDriveHelper:
                                 msg += f'<b> | <a href="{url}">Index link</a></b>'
                         msg += '<br><br>'
                         content_count += 1
-                    if (content_count==TELEGRAPHLIMIT):
+                    if (content_count >= TELEGRAPHLIMIT):
                         reached_max_limit = True
                       
                     
