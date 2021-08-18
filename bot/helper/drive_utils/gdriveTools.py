@@ -81,6 +81,24 @@ class GoogleDriveHelper:
             y = file.get("id")
         rtnlist.reverse()
         return rtnlist
+    
+    def escapes(self, str):
+        chars = ['\\', "'", '"', r'\a', r'\b', r'\f', r'\n', r'\r', r'\t']
+        for char in chars:
+            str = str.replace(char, '\\'+char)
+        return str
+
+    def drive_query_backup(self, parent_id, fileName):
+        fileName = self.escapes(str(fileName))
+        query = f"'{parent_id}' in parents and (name contains '{fileName}')"
+        response = self.__service.files().list(supportsTeamDrives=True,
+                                               includeTeamDriveItems=True,
+                                               q=query,
+                                               spaces='drive',
+                                               pageSize=1000,
+                                               fields='files(id, name, mimeType, size, parents)',
+                                               orderBy='folder, modifiedTime desc').execute()["files"]
+        return response;
 
     def drive_query(self, parent_id, search_type, fileName):
         query = ""
@@ -89,7 +107,7 @@ class GoogleDriveHelper:
                 query += "mimeType = 'application/vnd.google-apps.folder' and "
             elif search_type == '-f':
                 query += "mimeType != 'application/vnd.google-apps.folder' and "
-        var=re.split('[ ._,\\[\\]-]',fileName)
+        var=re.split('[ ._,\\[\\]-]', fileName)
         for text in var:
             query += f"name contains '{text}' and "
         query += "trashed=false"
@@ -109,7 +127,7 @@ class GoogleDriveHelper:
                                                    spaces='drive',
                                                    fields='files(id, name, mimeType, size, parents)',
                                                    orderBy='folder, modifiedTime desc').execute()["files"]
-        return response
+        return (response if len(response) > 0 else self.drive_query_backup(parent_id, fileName))
 
     def edit_telegraph(self):
         nxt_page = 1
