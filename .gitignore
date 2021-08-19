@@ -13,3 +13,4 @@ accounts/*
 drive_folder
 env
 venv
+/temp.py

@@ -131,6 +131,7 @@ class GoogleDriveHelper:
                                                    spaces='drive',
                                                    fields='files(id, name, mimeType, size, parents)',
                                                    orderBy='folder, modifiedTime desc').execute()["files"]
+        LOGGER.info(f"ParentId : {parent_id}")
         LOGGER.info(f"Primary Response Length: {len(response)}")
         if len(response) <= 0:
             response = self.drive_query_backup(parent_id, file_name)
