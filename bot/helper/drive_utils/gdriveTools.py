@@ -225,7 +225,7 @@ class GoogleDriveHelper:
         if self.num_of_path > 1:
             self.edit_telegraph()
 
-        msg = f"Found {"95+" if content_count > 95 else content_count}" + " results."
+        msg = "Found " + ("95+" if content_count > 95 else f"{content_count}") + " results."
 
         if reached_max_limit:
             msg += "\n(Only showing top 95 results.)"
