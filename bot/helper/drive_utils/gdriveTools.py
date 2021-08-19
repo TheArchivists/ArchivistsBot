@@ -98,7 +98,7 @@ class GoogleDriveHelper:
                                                pageSize=1000,
                                                fields='files(id, name, mimeType, size, parents)',
                                                orderBy='folder, modifiedTime desc').execute()["files"]
-        return response;
+        return response
 
     def drive_query(self, parent_id, search_type, fileName):
         query = ""
@@ -127,7 +127,11 @@ class GoogleDriveHelper:
                                                    spaces='drive',
                                                    fields='files(id, name, mimeType, size, parents)',
                                                    orderBy='folder, modifiedTime desc').execute()["files"]
-        return (response if len(response) > 0 else self.drive_query_backup(parent_id, fileName))
+        LOGGER.info(f"Primaary Response Length: {len(response)}")
+        if len(response) <= 0:
+            response = self.drive_query_backup(parent_id, fileName)
+            LOGGER.info(f"Backup Response Length: {len(response)}")
+        return response
 
     def edit_telegraph(self):
         nxt_page = 1
@@ -221,10 +225,10 @@ class GoogleDriveHelper:
         if self.num_of_path > 1:
             self.edit_telegraph()
 
-        msg = f"Found {content_count}" + ("+" if content_count >= 95 else "") + " results"
+        msg = f"Found {95 if content_count > 95 else content_count}" + ("+" if content_count >= 95 else "") + " results"
 
         if reached_max_limit:
-            msg += ". (Only showing top 95 results. Omitting remaining results)"
+            msg += "\n. (Only showing top 95 results.)"
 
         buttons = button_builder.ButtonMaker()
         buttons.buildbutton("Click Here for results", f"https://telegra.ph/{self.path[0]}")
