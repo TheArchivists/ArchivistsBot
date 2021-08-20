@@ -9,14 +9,14 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from telegram import InlineKeyboardMarkup
 
-from bot import DRIVE_NAME, DRIVE_ID, INDEX_URL, telegra_ph
+from bot import DRIVE_NAME, DRIVE_ID, INDEX_URL, telegraph_obj
 from bot.helper.telegram_helper import button_builder
 
 LOGGER = logging.getLogger(__name__)
 logging.getLogger('googleapiclient.discovery').setLevel(logging.ERROR)
 
 SIZE_UNITS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
-telegraph_limit = 95
+telegraph_limit = 90
 
 
 def get_readable_file_size(size_in_bytes) -> str:
@@ -157,9 +157,9 @@ class GoogleDriveHelper:
                 if nxt_page < self.num_of_path:
                     content += f'<b> | <a href="https://telegra.ph/{self.path[nxt_page]}">Next</a></b>'
                     nxt_page += 1
-            telegra_ph.edit_page(path=self.path[prev_page],
-                                 title='SearchX',
-                                 html_content=content)
+            telegraph_obj.edit_page(path=self.path[prev_page],
+                                    title='SearchX',
+                                    html_content=content)
         return
 
     def drive_list(self, file_name):
@@ -176,17 +176,15 @@ class GoogleDriveHelper:
                 file_name = file_name[2: len(file_name)]
         msg = ''
         INDEX = -1
+        response_len = 0
         content_count = 0
-        reached_max_limit = False
         add_title_msg = True
         for parent_id in DRIVE_ID:
             add_drive_title = True
             response = self.drive_query(parent_id, search_type, file_name)
-            # LOGGER.info(f"my a: {response}")
 
             INDEX += 1
             if response:
-
                 for file in response:
 
                     if add_title_msg:
@@ -196,9 +194,9 @@ class GoogleDriveHelper:
                     if add_drive_title:
                         msg += f"╾────────────╼<br><b>{DRIVE_NAME[INDEX]}</b><br>╾────────────╼<br>"
                         add_drive_title = False
-                    if file.get(
-                            'mimeType') == "application/vnd.google-apps.folder":
-                        # Detect Whether Current Entity is a Folder or File.
+
+                    # Detect Whether Current Entity is a Folder or File.
+                    if file.get('mimeType') == "application/vnd.google-apps.folder":
                         msg += f"🗃️<code>{file.get('name')}</code> <b>(folder)</b><br>" \
                                f"<b><a href='https://drive.google.com/drive/folders/{file.get('id')}'>Google Drive " \
                                f"link</a></b> "
@@ -206,7 +204,7 @@ class GoogleDriveHelper:
                             url_path = "/".join(
                                 [requests.utils.quote(n, safe='') for n in self.get_recursive_list(file, parent_id)])
                             url = f'{INDEX_URL[INDEX]}/{url_path}/'
-                            msg += f'<b> | <a href="{url}">Index link</a></b>'
+                            msg += f'<b> | <a href="{url}">Index Link</a></b>'
                     else:
                         msg += f"<code>{file.get('name')}</code> <b>({get_readable_file_size(file.get('size'))})" \
                                f"</b><br><b><a href='https://drive.google.com/uc?id={file.get('id')}" \
@@ -216,35 +214,32 @@ class GoogleDriveHelper:
                                 [requests.utils.quote(n, safe='') for n in self.get_recursive_list(file, parent_id)])
                             url = f'{INDEX_URL[INDEX]}/{url_path}'
                             msg += f'<b> | <a href="{url}">Index link</a></b>'
+
                     msg += '<br><br>'
                     content_count += 1
+                    response_len += 1
                     if content_count >= telegraph_limit:
-                        reached_max_limit = True
+                        content_count = 0
+                        if msg != '':
+                            self.telegraph_content.append(msg)
+                            msg = ''
 
-                        LOGGER.info(f"my a: {content_count}")
-                        # self.telegraph_content.append(msg)
-                        # msg = ""
-                        # content_count = 0
-                        break
-
+        # Check if there was any content in the last iteration of above loop before reaching the content limit
         if msg != '':
             self.telegraph_content.append(msg)
 
         if len(self.telegraph_content) == 0:
-            return "I ..I found nothing of that sort :(", None
+            return "I.. I found nothing of that sort :(", None
 
         for content in self.telegraph_content:
-            self.path.append(telegra_ph.create_page(title='♙ The Archivists • 04 • Dragonia',
-                                                    html_content=content)['path'])
+            self.path.append(telegraph_obj.create_page(title='♙ The Archivists • 04 • Dragonia',
+                                                       html_content=content)['path'])
 
         self.num_of_path = len(self.path)
         if self.num_of_path > 1:
             self.edit_telegraph()
 
-        msg = "Found " + ("95+" if content_count > 95 else f"{content_count}") + " results."
-
-        if reached_max_limit:
-            msg += "\n(Only showing top 95 results.)"
+        msg = f"Found {response_len} results."
 
         buttons = button_builder.ButtonMaker()
         buttons.build_button("Click Here for results", f"https://telegra.ph/{self.path[0]}")

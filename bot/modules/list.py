@@ -16,15 +16,14 @@ def list_drive(update, context):
         return
 
     reply = sendMessage('Searching...', context.bot, update)
-
     LOGGER.info(f"Searching: {search}")
-
     google_drive = GoogleDriveHelper(None)
+
     try:
         msg, button = google_drive.drive_list(search)
     except Exception as e:
-        msg, button = "Damn... Some crappy exception has popped up. Probably telegraph content limit exceeded. My " \
-                      "____ (content) was too big for telegraph's _____ (page).", None
+        msg, button = "Damn... Some crappy exception has popped up.... ( • ̀ω•́ )✄╰U╯ Probably telegraph content " \
+                      "limit exceeded. My ____ (content) was too big for telegraph's _____ (page).", None
         LOGGER.exception(e)
 
     editMessage(msg, reply, button)

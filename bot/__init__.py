@@ -72,7 +72,7 @@ else:
     LOGGER.error("The README.md file there to be read! Exiting now!")
     exit(1)
 
-telegra_ph = Telegraph(access_token=telegraph_token)
+telegraph_obj = Telegraph(access_token=telegraph_token)
 
 updater = tg.Updater(token=BOT_TOKEN, use_context=True)
 bot = updater.bot
