@@ -1,6 +1,7 @@
 from telegram.ext import BaseFilter
-from telegram import Message
+
 from bot import AUTHORIZED_CHATS, OWNER_ID
+
 
 class CustomFilters:
     class _OwnerFilter(BaseFilter):

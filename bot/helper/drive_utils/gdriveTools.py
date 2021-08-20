@@ -115,22 +115,27 @@ class GoogleDriveHelper:
         for text in var:
             query += f"name contains '{text}' and "
         query += "trashed=false"
-        if parent_id != "root":
-            response = self.__service.files().list(supportsTeamDrives=True,
-                                                   includeTeamDriveItems=True,
-                                                   teamDriveId=parent_id,
-                                                   q=query,
-                                                   corpora='drive',
-                                                   spaces='drive',
-                                                   pageSize=1000,
-                                                   fields='files(id, name, mimeType, size, teamDriveId, parents)',
-                                                   orderBy='folder, modifiedTime desc').execute()["files"]
-        else:
-            response = self.__service.files().list(q=query + " and 'me' in owners",
-                                                   pageSize=1000,
-                                                   spaces='drive',
-                                                   fields='files(id, name, mimeType, size, parents)',
-                                                   orderBy='folder, modifiedTime desc').execute()["files"]
+        response = []
+        try:
+            if parent_id != "root":
+                response = self.__service.files().list(supportsTeamDrives=True,
+                                                       includeTeamDriveItems=True,
+                                                       teamDriveId=parent_id,
+                                                       q=query,
+                                                       corpora='drive',
+                                                       spaces='drive',
+                                                       pageSize=1000,
+                                                       fields='files(id, name, mimeType, size, teamDriveId, parents)',
+                                                       orderBy='folder, modifiedTime desc').execute()["files"]
+            else:
+                response = self.__service.files().list(q=query + " and 'me' in owners",
+                                                       pageSize=1000,
+                                                       spaces='drive',
+                                                       fields='files(id, name, mimeType, size, parents)',
+                                                       orderBy='folder, modifiedTime desc').execute()["files"]
+        except Exception as e:
+            LOGGER.exception(f"Error while calling drive api function...")
+            LOGGER.exception(e)
         LOGGER.info(f"ParentId : {parent_id}")
         LOGGER.info(f"Primary Response Length: {len(response)}")
         if len(response) <= 0:
@@ -242,6 +247,6 @@ class GoogleDriveHelper:
             msg += "\n(Only showing top 95 results.)"
 
         buttons = button_builder.ButtonMaker()
-        buttons.buildbutton("Click Here for results", f"https://telegra.ph/{self.path[0]}")
+        buttons.build_button("Click Here for results", f"https://telegra.ph/{self.path[0]}")
 
         return msg, InlineKeyboardMarkup(buttons.build_menu(1))

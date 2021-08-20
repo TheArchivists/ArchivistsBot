@@ -4,7 +4,6 @@ import time
 
 import telegram.ext as tg
 from dotenv import load_dotenv
-
 from telegraph import Telegraph
 
 botStartTime = time.time()
@@ -18,13 +17,15 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 load_dotenv('config.env')
 
-def getConfig(name: str):
+
+def get_config(name: str):
     return os.environ[name]
+
 
 LOGGER = logging.getLogger(__name__)
 
 try:
-    if bool(getConfig('_____REMOVE_THIS_LINE_____')):
+    if bool(get_config('_____REMOVE_THIS_LINE_____')):
         logging.error('The README.md file there to be read! Exiting now!')
         exit()
 except KeyError:
@@ -42,9 +43,9 @@ if os.path.exists('authorized_chats.txt'):
             AUTHORIZED_CHATS.add(int(line.split()[0]))
 
 try:
-    BOT_TOKEN = getConfig('BOT_TOKEN')
-    OWNER_ID = int(getConfig('OWNER_ID'))
-    telegraph_token = getConfig('TELEGRAPH_TOKEN')
+    BOT_TOKEN = get_config('BOT_TOKEN')
+    OWNER_ID = int(get_config('OWNER_ID'))
+    telegraph_token = get_config('TELEGRAPH_TOKEN')
 except KeyError as e:
     LOGGER.error("One or more env variables missing! Exiting now")
     exit(1)
@@ -65,14 +66,14 @@ if os.path.exists('drive_folder'):
             except IndexError as e:
                 INDEX_URL.append(None)
 
-if DRIVE_ID :
+if DRIVE_ID:
     pass
-else :
+else:
     LOGGER.error("The README.md file there to be read! Exiting now!")
     exit(1)
 
 telegra_ph = Telegraph(access_token=telegraph_token)
 
-updater = tg.Updater(token=BOT_TOKEN,use_context=True)
+updater = tg.Updater(token=BOT_TOKEN, use_context=True)
 bot = updater.bot
 dispatcher = updater.dispatcher
