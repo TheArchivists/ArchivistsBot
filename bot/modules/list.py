@@ -9,10 +9,11 @@ from bot.helper.telegram_helper.message_utils import sendMessage, editMessage
 
 @run_async
 def list_drive(update, context):
+    LOGGER.info("List function called")
     try:
         search = update.message.text.split(' ', maxsplit=1)[1]
     except IndexError:
-        sendMessage('Send A Search Key Along With Command', context.bot, update)
+        sendMessage('Send a Search Key Along With Command', context.bot, update)
         return
 
     reply = sendMessage('Searching...', context.bot, update)
