@@ -4,7 +4,7 @@ from telegram.ext import run_async
 from bot import AUTHORIZED_CHATS, dispatcher
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.filters import CustomFilters
-from bot.helper.telegram_helper.message_utils import send_message
+from bot.helper.telegram_helper.message_utils import sendMessage
 
 
 @run_async
@@ -40,7 +40,7 @@ def authorize(update, context):
                     msg = 'Person Authorized to use the bot!'
                 else:
                     msg = 'Person already authorized'
-        send_message(msg, context.bot, update)
+        sendMessage(msg, context.bot, update)
 
 
 @run_async
@@ -75,7 +75,7 @@ def unauthorize(update, context):
         file.truncate(0)
         for i in AUTHORIZED_CHATS:
             file.write(f'{i}\n')
-    send_message(msg, context.bot, update)
+    sendMessage(msg, context.bot, update)
 
 
 @run_async
@@ -84,7 +84,7 @@ def sendAuthChats(update, context):
     for user in AUTHORIZED_CHATS:
         users += f"{user}\n"
     users = users if users != '' else "None"
-    send_message(f'Authorized Chats are : \n<code>{users}</code>\n', context.bot, update)
+    sendMessage(f'Authorized Chats are : \n<code>{users}</code>\n', context.bot, update)
 
 
 send_auth_handler = CommandHandler(command=BotCommands.AuthorizedUsersCommand, callback=sendAuthChats,

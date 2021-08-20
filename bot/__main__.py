@@ -11,9 +11,9 @@ def start(update, context):
     LOGGER.info(
         'UID: {} - UN: {} - MSG: {}'.format(update.message.chat.id, update.message.chat.username, update.message.text))
     if update.message.chat.type == "private":
-        send_message(f"Hey <b>{update.message.chat.first_name}</b>. Welcome to <b>SearchX Bot</b>", context.bot, update)
+        sendMessage(f"Hey <b>{update.message.chat.first_name}</b>. Welcome to <b>SearchX Bot</b>", context.bot, update)
     else:
-        send_message("I'm alive :)", context.bot, update)
+        sendMessage("I'm alive :)", context.bot, update)
 
 
 @run_async
