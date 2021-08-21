@@ -2,6 +2,7 @@ import logging
 import os
 import pickle
 import re
+import sys
 
 import requests
 from google.auth.transport.requests import Request
@@ -151,7 +152,7 @@ class GoogleDriveHelper:
                 content += f'<b><a href="https://telegra.ph/{self.path[nxt_page]}">Next</a></b>'
                 nxt_page += 1
             else:
-                if prev_page <= self.num_of_path:
+                if prev_page < self.num_of_path:
                     content += f'<b><a href="https://telegra.ph/{self.path[prev_page]}">Previous</a></b>'
                     prev_page += 1
                 if nxt_page < self.num_of_path:
@@ -160,7 +161,6 @@ class GoogleDriveHelper:
             telegraph_obj.edit_page(path=self.path[prev_page],
                                     title='SearchX',
                                     html_content=content)
-        return
 
     def drive_list(self, file_name):
         search_type = None
@@ -231,9 +231,15 @@ class GoogleDriveHelper:
         if len(self.telegraph_content) == 0:
             return "I.. I found nothing of that sort :(", None
 
+        page_index = -1
         for content in self.telegraph_content:
-            self.path.append(telegraph_obj.create_page(title='♙ The Archivists • 04 • Dragonia',
-                                                       html_content=content)['path'])
+            page_index += 1
+            try:
+                self.path.append(telegraph_obj.create_page(title='♙ The Archivists • 04 • Dragonia',
+                                                           html_content=content)['path'])
+            except Exception as e:
+                LOGGER.info(f"Error when generating page {page_index}")
+                LOGGER.exception(str(e).encode(sys.stdout.encoding, errors='replace'))
 
         self.num_of_path = len(self.path)
         if self.num_of_path > 1:

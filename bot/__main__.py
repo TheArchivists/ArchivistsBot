@@ -1,3 +1,5 @@
+import sys
+
 from telegram.ext import CommandHandler, run_async
 
 from bot import AUTHORIZED_CHATS, dispatcher, updater
@@ -38,9 +40,9 @@ def list_drive(update, context):
     try:
         msg, button = google_drive.drive_list(search)
     except Exception as e:
-        msg, button = "Damn... Some crappy exception has popped up.... ( • ̀ω•́ )✄╰U╯ Probably telegraph content " \
+        msg, button = "Oops.. Something weird happened.. ( • ̀ω•́ )✄╰U╯. Probably telegraph content " \
                       "limit exceeded. My ____ (content) was too big for telegraph's _____ (page).", None
-        LOGGER.exception(str(e))
+        LOGGER.exception(str(e).encode(sys.stdout.encoding, errors='replace'))
 
     editMessage(msg, reply, button)
 
