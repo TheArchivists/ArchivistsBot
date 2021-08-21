@@ -2,7 +2,6 @@ import logging
 import os
 import pickle
 import re
-import sys
 
 import requests
 from google.auth.transport.requests import Request
@@ -17,7 +16,7 @@ LOGGER = logging.getLogger(__name__)
 logging.getLogger('googleapiclient.discovery').setLevel(logging.ERROR)
 
 SIZE_UNITS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
-telegraph_limit = 90
+telegraph_limit = 95
 
 
 def get_readable_file_size(size_in_bytes) -> str:
@@ -176,8 +175,8 @@ class GoogleDriveHelper:
                 file_name = file_name[2: len(file_name)]
         msg = ''
         INDEX = -1
-        response_len = 0
         content_count = 0
+        reached_max_limit = False
         add_title_msg = True
         for parent_id in DRIVE_ID:
             add_drive_title = True
@@ -217,35 +216,28 @@ class GoogleDriveHelper:
 
                     msg += '<br><br>'
                     content_count += 1
-                    response_len += 1
                     if content_count >= telegraph_limit:
-                        content_count = 0
-                        if msg != '':
-                            self.telegraph_content.append(msg)
-                            msg = ''
+                        reached_max_limit = True
+                        break
 
-        # Check if there was any content in the last iteration of above loop before reaching the content limit
         if msg != '':
             self.telegraph_content.append(msg)
 
         if len(self.telegraph_content) == 0:
-            return "I.. I found nothing of that sort :(", None
+            return "I ..I found nothing of that sort :(", None
 
-        page_index = -1
         for content in self.telegraph_content:
-            page_index += 1
-            try:
-                self.path.append(telegraph_obj.create_page(title='♙ The Archivists • 04 • Dragonia',
-                                                           html_content=content)['path'])
-            except Exception as e:
-                LOGGER.info(f"Error when generating page {page_index}")
-                LOGGER.exception(str(e).encode(sys.stdout.encoding, errors='replace'))
+            self.path.append(telegraph_obj.create_page(title='♙ The Archivists • 04 • Dragonia',
+                                                       html_content=content)['path'])
 
         self.num_of_path = len(self.path)
         if self.num_of_path > 1:
             self.edit_telegraph()
 
-        msg = f"Found {response_len} results."
+        msg = "Found " + ("95+" if content_count > 95 else f"{content_count}") + " results."
+
+        if reached_max_limit:
+            msg += "\n(Only showing top 95 results.)"
 
         buttons = button_builder.ButtonMaker()
         buttons.build_button("Click Here for results", f"https://telegra.ph/{self.path[0]}")
