@@ -113,7 +113,9 @@ class GoogleDriveHelper:
                 query += "mimeType != 'application/vnd.google-apps.folder' and "
         var = re.split('[ ._,\\[\\]-]', file_name)
         for text in var:
-            query += f"name contains '{text}' and "
+            text.replace("[ ]+", "")
+            if text != '':
+                query += f"name contains '{text}' and "
         query += "trashed=false"
         response = []
         try:
@@ -162,6 +164,7 @@ class GoogleDriveHelper:
                                     html_content=content)
 
     def drive_list(self, file_name):
+        file_name = escapes(file_name)
         search_type = None
         if re.search("^-d ", file_name, re.IGNORECASE):
             search_type = '-d'
