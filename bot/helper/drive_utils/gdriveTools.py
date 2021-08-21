@@ -226,9 +226,10 @@ class GoogleDriveHelper:
         if len(self.telegraph_content) == 0:
             return "I ..I found nothing of that sort :(", None
 
+        pref = "♙"
         for content in self.telegraph_content:
-            self.path.append(telegraph_obj.create_page(title='♙ The Archivists • 04 • Dragonia',
-                                                       html_content=content)['path'])
+            self.path.append(
+                telegraph_obj.create_page(title=f'{pref} The Archivists • 04 • Dragonia', html_content=content)['path'])
 
         self.num_of_path = len(self.path)
         if self.num_of_path > 1:

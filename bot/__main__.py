@@ -38,9 +38,9 @@ def list_drive(update, context):
     try:
         msg, button = google_drive.drive_list(search)
     except Exception as e:
-        msg, button = "Oops.. Something weird happened.. ( • ̀ω•́ )✄╰U╯. Probably telegraph content " \
-                      "limit exceeded. My ____ (content) was too big for telegraph's _____ (page).", None
-        LOGGER.exception(str(e).replace("♙", "[X]"))
+        msg, button = "Oops.. Something weird happened.. ( • ̀ω•́ )✄╰U╯. Probably my ____ (content) was too big for " \
+                      "telegraph's _____ (page).", None
+        LOGGER.exception(e)
 
     editMessage(msg, reply, button)
 
