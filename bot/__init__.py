@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import time
@@ -42,7 +43,11 @@ if os.path.exists('authorized_chats.txt'):
 
 try:
     BOT_TOKEN = get_config('BOT_TOKEN')
-    OWNER_ID = int(get_config('OWNER_ID'))
+    OWNER_ID = None
+    try:
+        OWNER_ID = json.loads(get_config('OWNER_ID'))
+    except json.JSONDecodeError as e:
+        OWNER_ID = int(get_config('OWNER_ID'))
     telegraph_token = get_config('TELEGRAPH_TOKEN')
 except KeyError as e:
     LOGGER.error("One or more env variables missing! Exiting now")
