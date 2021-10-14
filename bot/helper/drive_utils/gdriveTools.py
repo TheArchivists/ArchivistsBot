@@ -111,9 +111,8 @@ class GoogleDriveHelper:
                 query += "mimeType = 'application/vnd.google-apps.folder' and "
             elif search_type == '-f':
                 query += "mimeType != 'application/vnd.google-apps.folder' and "
-        var = re.split('[ ._,\\[\\]-]', file_name)
+        var = re.split('[ ._,\\[\\]-]+', file_name)
         for text in var:
-            text.replace("[ ]+", "")
             if text != '':
                 query += f"name contains '{text}' and "
         query += "trashed=false"
@@ -177,7 +176,7 @@ class GoogleDriveHelper:
             if file_name[1] == ' ' and file_name[0] in remove_list:
                 file_name = file_name[2: len(file_name)]
         msg = ''
-        INDEX = -1
+        index = -1
         content_count = 0
         reached_max_limit = False
         add_title_msg = True
@@ -185,7 +184,7 @@ class GoogleDriveHelper:
             add_drive_title = True
             response = self.drive_query(parent_id, search_type, file_name)
 
-            INDEX += 1
+            index += 1
             if response:
                 for file in response:
 
@@ -194,7 +193,7 @@ class GoogleDriveHelper:
                               f'/ArchivistsBot"> Bot Repo </a></b> || @TheArchivists '
                         add_title_msg = False
                     if add_drive_title:
-                        msg += f"╾────────────╼<br><b>{DRIVE_NAME[INDEX]}</b><br>╾────────────╼<br>"
+                        msg += f"╾────────────╼<br><b>{DRIVE_NAME[index]}</b><br>╾────────────╼<br>"
                         add_drive_title = False
 
                     # Detect Whether Current Entity is a Folder or File.
@@ -202,19 +201,19 @@ class GoogleDriveHelper:
                         msg += f"🗃️<code>{file.get('name')}</code> <b>(folder)</b><br>" \
                                f"<b><a href='https://drive.google.com/drive/folders/{file.get('id')}'>Google Drive " \
                                f"link</a></b> "
-                        if INDEX_URL[INDEX] is not None:
+                        if INDEX_URL[index] is not None:
                             url_path = "/".join(
                                 [requests.utils.quote(n, safe='') for n in self.get_recursive_list(file, parent_id)])
-                            url = f'{INDEX_URL[INDEX]}/{url_path}/'
+                            url = f'{INDEX_URL[index]}/{url_path}/'
                             msg += f'<b> | <a href="{url}">Index Link</a></b>'
                     else:
                         msg += f"<code>{file.get('name')}</code> <b>({get_readable_file_size(file.get('size'))})" \
                                f"</b><br><b><a href='https://drive.google.com/uc?id={file.get('id')}" \
                                f"&export=download'>Google Drive link</a></b> "
-                        if INDEX_URL[INDEX] is not None:
+                        if INDEX_URL[index] is not None:
                             url_path = "/".join(
                                 [requests.utils.quote(n, safe='') for n in self.get_recursive_list(file, parent_id)])
-                            url = f'{INDEX_URL[INDEX]}/{url_path}'
+                            url = f'{INDEX_URL[index]}/{url_path}'
                             msg += f'<b> | <a href="{url}">Index link</a></b>'
 
                     msg += '<br><br>'
