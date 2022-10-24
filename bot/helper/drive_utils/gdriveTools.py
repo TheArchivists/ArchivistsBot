@@ -149,14 +149,14 @@ class GoogleDriveHelper:
         prev_page = 0
         for content in self.telegraph_content:
             if nxt_page == 1:
-                content += f'<b><a href="https://telegra.ph/{self.path[nxt_page]}">Next</a></b>'
+                content += f'<b><a href="https://graph.org/{self.path[nxt_page]}">Next</a></b>'
                 nxt_page += 1
             else:
                 if prev_page < self.num_of_path:
-                    content += f'<b><a href="https://telegra.ph/{self.path[prev_page]}">Previous</a></b>'
+                    content += f'<b><a href="https://graph.org/{self.path[prev_page]}">Previous</a></b>'
                     prev_page += 1
                 if nxt_page < self.num_of_path:
-                    content += f'<b> | <a href="https://telegra.ph/{self.path[nxt_page]}">Next</a></b>'
+                    content += f'<b> | <a href="https://graph.org/{self.path[nxt_page]}">Next</a></b>'
                     nxt_page += 1
             telegraph_obj.edit_page(path=self.path[prev_page],
                                     title='SearchX',
@@ -243,6 +243,6 @@ class GoogleDriveHelper:
             msg += "\n(Only showing top 95 results.)"
 
         buttons = button_builder.ButtonMaker()
-        buttons.build_button("Click Here for results", f"https://telegra.ph/{self.path[0]}")
+        buttons.build_button("Click Here for results", f"https://graph.org/{self.path[0]}")
 
         return msg, InlineKeyboardMarkup(buttons.build_menu(1))
