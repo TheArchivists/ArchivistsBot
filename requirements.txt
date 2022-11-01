@@ -3,6 +3,6 @@ requests>=2.25.1
 python-dotenv>=0.10
 telegraph>=1.4.1
 google~=3.0.0
-python-telegram-bot>=13.7
+python-telegram-bot==12.8
 google-api-python-client
 google-auth-oauthlib>=0.4.6
