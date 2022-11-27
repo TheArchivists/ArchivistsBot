@@ -52,6 +52,12 @@ try:
 except KeyError as e:
     LOGGER.error("One or more env variables missing! Exiting now")
     exit(1)
+    
+try:
+    USE_SA = bool(get_config('USE_SA'))
+except:
+    USE_SA = False
+
 
 DRIVE_NAME = []
 DRIVE_ID = []

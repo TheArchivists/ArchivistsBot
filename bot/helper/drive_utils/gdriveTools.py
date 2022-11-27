@@ -7,9 +7,10 @@ import requests
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
+from google.oauth2 import service_account
 from telegram import InlineKeyboardMarkup
 
-from bot import DRIVE_NAME, DRIVE_ID, INDEX_URL, telegraph_obj
+from bot import DRIVE_NAME, DRIVE_ID, INDEX_URL, telegraph_obj, USE_SA
 from bot.helper.telegram_helper import button_builder
 
 LOGGER = logging.getLogger(__name__)
@@ -55,21 +56,26 @@ class GoogleDriveHelper:
     def authorize(self):
         # Get credentials
         credentials = None
-        if os.path.exists(self.__G_DRIVE_TOKEN_FILE):
-            with open(self.__G_DRIVE_TOKEN_FILE, 'rb') as f:
-                credentials = pickle.load(f)
-        if credentials is None or not credentials.valid:
-            if credentials and credentials.expired and credentials.refresh_token:
-                credentials.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    'credentials.json', self.__OAUTH_SCOPE)
-                LOGGER.info(flow)
-                credentials = flow.run_console(port=0)
+        if USE_SA:
+            credentials = service_account.Credentials.from_service_account_file(
+                    f'accounts/service_account.json',
+                    scopes=self.__OAUTH_SCOPE)
+        else:
+            if os.path.exists(self.__G_DRIVE_TOKEN_FILE):
+                with open(self.__G_DRIVE_TOKEN_FILE, 'rb') as f:
+                    credentials = pickle.load(f)
+            if credentials is None or not credentials.valid:
+                if credentials and credentials.expired and credentials.refresh_token:
+                    credentials.refresh(Request())
+                else:
+                    flow = InstalledAppFlow.from_client_secrets_file(
+                        'credentials.json', self.__OAUTH_SCOPE)
+                    LOGGER.info(flow)
+                    credentials = flow.run_console(port=0)
 
-            # Save the credentials for the next run
-            with open(self.__G_DRIVE_TOKEN_FILE, 'wb') as token:
-                pickle.dump(credentials, token)
+                # Save the credentials for the next run
+                with open(self.__G_DRIVE_TOKEN_FILE, 'wb') as token:
+                    pickle.dump(credentials, token)
         return build('drive', 'v3', credentials=credentials, cache_discovery=False)
 
     def get_recursive_list(self, file, root_id="root"):
